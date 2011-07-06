@@ -1,0 +1,13 @@
+go to devRoot
+disconnect the DIRAC project
+and move the DIRAC project to DIRAC_todaydate
+this will move also the git project not only the directory
+clone again from my remote project
+create additional branches
+i.e. storagelemenet, dataintegrity
+NEVER work in the integration branch
+once it is fine,
+switch to a given branch
+add the files to index (it is like a commit to a local repository)
+commit to my remote repo, to the corresponding branch. How do I set the correspondance between a branch of my local repo that I have cloned a branch in the remote repository?
+
