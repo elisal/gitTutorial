@@ -1,0 +1,55 @@
+[hpdesk] /home/elisal > mkdir dev
+[hpdesk] /home/elisal > export devRoot=$HOME/dev
+[hpdesk] /home/elisal > cd $devRoot
+[hpdesk] /home/elisal/dev > git clone git@github.com:elisal/DIRAC.git
+Cloning into DIRAC...
+Enter passphrase for key '/home/elisal/.ssh/id_rsa': 
+remote: Counting objects: 55154, done.
+remote: Compressing objects: 100% (12548/12548), done.
+remote: Total 55154 (delta 42367), reused 55045 (delta 42291)
+Receiving objects: 100% (55154/55154), 8.83 MiB | 2.56 MiB/s, done.
+Resolving deltas: 100% (42367/42367), done.
+[hpdesk] /home/elisal/dev > cd DIRAC/
+[hpdesk] /home/elisal/dev/DIRAC > git remote add upstream
+https://github.com/DIRACGrid/DIRAC.git
+[hpdesk] /home/elisal/dev/DIRAC > export GIT_SSL_NO_VERIFY=true
+[hpdesk] /home/elisal/dev/DIRAC > git fetch upstream
+remote: Counting objects: 73, done.
+remote: Compressing objects: 100% (23/23), done.
+remote: Total 39 (delta 28), reused 27 (delta 16)
+Unpacking objects: 100% (39/39), done.
+From https://github.com/DIRACGrid/DIRAC
+ * [new branch]      integration -> upstream/integration
+ * [new branch]      master     -> upstream/master
+[hpdesk] /home/elisal/dev/DIRAC > cd $devRoot
+[hpdesk] /home/elisal/dev > svn co
+svn+ssh://svn.cern.ch/reps/dirac/LHCbDIRAC/trunk/LHCbDIRAC
+[hpdesk] /home/elisal/dev > DIRAC/Core/scripts/dirac-deploy-scripts.py
+[hpdesk] /home/elisal/dev > scripts/dirac-install -X -t server -i 26 -r
+v6r0-pre4 -g 2011-06-06
+scripts/dirac-configure -S LHCb-Development -C
+'dips://lhcbprod.pic.es:9135/Configuration/Server' -n hpdesk -H
+[hpdesk] /home/elisal/dev > cp ~/gitDirac3/etc/dirac.cfg etc/dirac.cfg 
+[hpdesk] /home/elisal/dev > cp ~/gitDirac3/etc/grid-security/host*
+etc/grid-security/
+[hpdesk] /home/elisal/gitDirac3/mysql/share/mysql > ./mysql.server stop
+Shutting down MySQL....                                    [  OK  ]
+[hpdesk] /home/elisal/gitDirac3/mysql/share/mysql > rm -rf
+/home/elisal/gitDirac3/mysql/
+[hpdesk] /home/elisal/dev > dirac-install-mysql
+[hpdesk] /home/elisal/dev > dirac-install-db DataIntegrityDB
+[hpdesk] /home/elisal/dev > dirac-service DataManagement/DataIntegrity
+
+from another shell check that the service is reachable:
+[hpdesk] /home/elisal/dev > source bashrc 
+[hpdesk] /home/elisal/dev > dirac-proxy-init 
+python:
+import DIRAC
+from DIRAC.Core.Base import Script
+Script.parseCommandLine( ignoreErrors = False )
+from DIRAC.DataManagementSystem.Client.DataIntegrityClient import
+DataIntegrityClient
+cl = DataIntegrityClient()
+cl.getProblematicsSummary()
+
+ok!
