@@ -1,6 +1,12 @@
+Choose a rootDev directory:
 [hpdesk] /home/elisal > mkdir dev
 [hpdesk] /home/elisal > export devRoot=$HOME/dev
 [hpdesk] /home/elisal > cd $devRoot
+
+DIRAC repository is hosted at https://github.com/DIRACGrid/DIRAC 
+I created an account in github and forked this repository, to a private repository:
+git@github.com:elisal/DIRAC.git
+clone my repository that I have forked from the main:
 [hpdesk] /home/elisal/dev > git clone git@github.com:elisal/DIRAC.git
 Cloning into DIRAC...
 Enter passphrase for key '/home/elisal/.ssh/id_rsa': 
@@ -9,9 +15,13 @@ remote: Compressing objects: 100% (12548/12548), done.
 remote: Total 55154 (delta 42367), reused 55045 (delta 42291)
 Receiving objects: 100% (55154/55154), 8.83 MiB | 2.56 MiB/s, done.
 Resolving deltas: 100% (42367/42367), done.
+
+all the releases will be done in github.com/DIRACGrid/DIRAC so you
+ need to define a remote for that repository to be able to pull newly released
+changes into your working repo. We will name that repository upstream:
+
 [hpdesk] /home/elisal/dev > cd DIRAC/
-[hpdesk] /home/elisal/dev/DIRAC > git remote add upstream
-https://github.com/DIRACGrid/DIRAC.git
+[hpdesk] /home/elisal/dev/DIRAC > git remote add upstream https://github.com/DIRACGrid/DIRAC.git
 [hpdesk] /home/elisal/dev/DIRAC > export GIT_SSL_NO_VERIFY=true
 [hpdesk] /home/elisal/dev/DIRAC > git fetch upstream
 remote: Counting objects: 73, done.
@@ -21,21 +31,27 @@ Unpacking objects: 100% (39/39), done.
 From https://github.com/DIRACGrid/DIRAC
  * [new branch]      integration -> upstream/integration
  * [new branch]      master     -> upstream/master
+ 
+ also in parallel I have to checkout other extensions:
 [hpdesk] /home/elisal/dev/DIRAC > cd $devRoot
-[hpdesk] /home/elisal/dev > svn co
-svn+ssh://svn.cern.ch/reps/dirac/LHCbDIRAC/trunk/LHCbDIRAC
+[hpdesk] /home/elisal/dev > svn co svn+ssh://svn.cern.ch/reps/dirac/LHCbDIRAC/trunk/LHCbDIRAC
+
+deploy DIRAC scripts:
 [hpdesk] /home/elisal/dev > DIRAC/Core/scripts/dirac-deploy-scripts.py
-[hpdesk] /home/elisal/dev > scripts/dirac-install -X -t server -i 26 -r
-v6r0-pre4 -g 2011-06-06
-scripts/dirac-configure -S LHCb-Development -C
-'dips://lhcbprod.pic.es:9135/Configuration/Server' -n hpdesk -H
+
+install dirac including the externals and the lcg bundle:
+[hpdesk] /home/elisal/dev > scripts/dirac-install -X -t server -i 26 -r v6r0-pre4 -g 2011-06-06
+
+configure my installation with the name of my desktop (the same I will have to put in the dirac.cfg):
+[hpdesk] /home/elisal/dev > scripts/dirac-configure -S LHCb-Development -C 'dips://lhcbprod.pic.es:9135/Configuration/Server' -n hpdesk -H
 [hpdesk] /home/elisal/dev > cp ~/gitDirac3/etc/dirac.cfg etc/dirac.cfg 
-[hpdesk] /home/elisal/dev > cp ~/gitDirac3/etc/grid-security/host*
-etc/grid-security/
+[hpdesk] /home/elisal/dev > cp ~/gitDirac3/etc/grid-security/host* etc/grid-security/
+
+warning! in case I need to reinstall mysql, first stop the deamon and delete the directories with DB:
 [hpdesk] /home/elisal/gitDirac3/mysql/share/mysql > ./mysql.server stop
 Shutting down MySQL....                                    [  OK  ]
-[hpdesk] /home/elisal/gitDirac3/mysql/share/mysql > rm -rf
-/home/elisal/gitDirac3/mysql/
+[hpdesk] /home/elisal/gitDirac3/mysql/share/mysql > rm -rf /home/elisal/gitDirac3/mysql/
+
 [hpdesk] /home/elisal/dev > dirac-install-mysql
 [hpdesk] /home/elisal/dev > dirac-install-db DataIntegrityDB
 [hpdesk] /home/elisal/dev > dirac-service DataManagement/DataIntegrity
@@ -47,9 +63,23 @@ python:
 import DIRAC
 from DIRAC.Core.Base import Script
 Script.parseCommandLine( ignoreErrors = False )
-from DIRAC.DataManagementSystem.Client.DataIntegrityClient import
-DataIntegrityClient
+from DIRAC.DataManagementSystem.Client.DataIntegrityClient import DataIntegrityClient
 cl = DataIntegrityClient()
 cl.getProblematicsSummary()
 
 ok!
+
+RE-INSTALLING the repo (only DIRAC repo!):
+if I have problems, i.e. with the git structure (the structure of branches for example) might be easier to 
+remove the DIRAC directory and clone a new one. No need to co again LHCbDirac.
+[hpdesk] /home/elisal/dev/DIRAC > cd ..
+[hpdesk] /home/elisal/dev > mv DIRAC/ DIRAC_A4
+[hpdesk] /home/elisal/dev > git clone git@github.com:elisal/DIRAC.git
+[hpdesk] /home/elisal/dev > cd DIRAC/
+[hpdesk] /home/elisal/dev/DIRAC > git remote add upstream https://github.com/DIRACGrid/DIRAC.git
+[hpdesk] /home/elisal/dev/DIRAC > export GIT_SSL_NO_VERIFY=true
+[hpdesk] /home/elisal/dev/DIRAC > git fetch upstream
+[hpdesk] /home/elisal/dev > DIRAC/Core/scripts/dirac-deploy-scripts.py
+[hpdesk] /home/elisal/dev > scripts/dirac-install -X -t server -i 26 -r v6r0-pre4 -g 2011-06-06
+[hpdesk] /home/elisal/dev > scripts/dirac-configure -S LHCb-Development -C 'dips://lhcbprod.pic.es:9135/Configuration/Server' -n hpdesk -H
+
