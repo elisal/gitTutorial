@@ -1,13 +1,50 @@
-go to devRoot
-disconnect the DIRAC project
-and move the DIRAC project to DIRAC_todaydate
+Some practical instructions for development.
+
+How to do another installation of the Dirac git project:
+
+From Eclipse, disconnect the DIRAC project.
+go to devRoot and move the DIRAC project to DIRAC_todaydate
 this will move also the git project not only the directory
-clone again from my remote project
-create additional branches
+clone again from my remote project on github, this will again create the DIRAC directory with the git project
+(no interference with the previous project).
+Do to development, create additional branches
 i.e. storagelemenet, dataintegrity
 NEVER work in the integration branch
 once it is fine,
 switch to a given branch
-add the files to index (it is like a commit to a local repository)
-commit to my remote repo, to the corresponding branch. How do I set the correspondance between a branch of my local repo that I have cloned a branch in the remote repository?
+1)add the files to index (it is like a commit to a local repository)
+2)commit to my remote repo, to the corresponding branch. 
+3)select the project (not only the file!) and do with right mouse button: Team/Push upstream
+and after check that the change has been propagated in github, in the corresponding branch.
+
+USING BRANCHES
+
+in my local repository on my desktop, I create a new branch 'temp', for example for temporary tests. 
+This branch is only for local tests, I will not push things from here to upstream. So I will not push the new
+branch to my remote repository! it won't appear in github.
+to make the change appear only in the branch where it was done, I have to 'add' the file to the index and commit.
+then, switching to another branch, the change will not appear.
+This allows to isolate completely the development, within one project, into several independent branches.
+
+e.g. I applied a modification in the temp branch to the FrameworkSystem/Client/ProxyGeneration.py, adding the debugMsg method.
+In the integration branch, the change is NOT there:
+
+[hpdesk] /home/elisal/dev/DIRAC > git branch
+  devStorageElement
+* integration
+  temp
+[hpdesk] /home/elisal/dev/DIRAC > grep debugMsg FrameworkSystem/Client/ProxyGeneration.py
+whereas in the 'temp' branch:
+[hpdesk] /home/elisal/dev/DIRAC > git checkout temp
+Switched to branch 'temp'
+[hpdesk] /home/elisal/dev/DIRAC > git branch
+  devStorageElement
+  integration
+* temp
+[hpdesk] /home/elisal/dev/DIRAC > grep debugMsg FrameworkSystem/Client/ProxyGeneration.py
+  def debugMsg( self, arg ):
+
+ok.
+
+
 
